@@ -408,35 +408,118 @@ main:focus, main:focus-visible { outline: none; }
 .lb-prev { left: 1rem; }
 .lb-next { right: 1rem; }
 
+/* ---------- layout per page ---------- */
+
+/* Pages other than home have no right-hand column. */
+body:not(.has-right) .shell { grid-template-columns: 230px minmax(0, 1fr); max-width: 1020px; }
+
+/* A copy of the home widgets inside the page, used on phones and tablets only. */
+.home-widgets { display: none; }
+.home-widgets .about-box { --c: var(--sky); }
+.home-widgets .now { --c: var(--butter); }
+.home-widgets .badges-box { --c: var(--sage); }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1100px) {
   .shell { grid-template-columns: 210px minmax(0, 1fr) 210px; gap: 20px; }
+  body:not(.has-right) .shell { grid-template-columns: 210px minmax(0, 1fr); }
   .item { grid-template-columns: 160px minmax(0, 1fr); }
 }
 
+/* Tablets and phones: one column. */
 @media (max-width: 960px) {
-  .shell { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
+  .shell, body:not(.has-right) .shell { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
   main { order: -1; }
-  .side { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 22px; margin-top: 10px; }
+
+  /* The home widgets move up, right after the welcome note. */
+  .home-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; align-items: start; }
+  .home-widgets .about-box { grid-row: span 2; }
+  .home-widgets .badges-box { grid-column: 2; }
+  .side-right, .side .badges-box { display: none !important; }
+
+  /* Below the page: calendar and contents on home, just contents elsewhere. */
+  .side { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 22px; margin-top: 14px; }
+  body:not(.is-home) .side .cal-box { display: none; }
 }
 
+/* Phones */
 @media (max-width: 600px) {
   body { font-size: 15px; }
-  .site-head { padding-top: calc(62px + env(safe-area-inset-top, 0px)); }
-  .tabs { gap: 8px; padding-bottom: 20px; }
-  .tab { padding: 5px 14px; }
-  .item { grid-template-columns: minmax(0, 1fr); }
-  .item-photo { max-width: 340px; }
+
+  .theme-btn { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: 10px; width: 2.4rem; height: 2.4rem; }
+  .site-head { padding: calc(18px + env(safe-area-inset-top, 0px)) 52px 2px; }
+  .site-title { font-size: clamp(2.1rem, 11vw, 2.8rem); text-shadow: 2px 2px 0 var(--blush); }
+  .tagline { font-size: 1.25rem; }
+
+  /* Tabs become one swipeable row that stays at the top while scrolling. */
+  .tabs {
+    position: sticky; top: 0; z-index: 15;
+    flex-wrap: nowrap; justify-content: flex-start; gap: 8px;
+    margin: 10px 0 18px; padding: 10px 16px;
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-top: 2px dotted var(--dot); border-bottom: 2px dotted color-mix(in srgb, var(--velvet) 35%, transparent);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; padding: 7px 16px; min-height: 40px; display: inline-flex; align-items: center; }
+  .tab:hover { transform: none; }
+
+  .shell { padding: 0 14px 30px; gap: 0; }
+  .box, .item { padding: 15px; margin-bottom: 24px; box-shadow: 4px 4px 0 var(--c, var(--rose)); }
+  .side .box:nth-child(odd), .side .box:nth-child(even) { transform: none; }
+
+  h1 { font-size: 2.1rem; }
+  h2 { font-size: 1.75rem; }
+  .letter { padding: 16px 18px; }
+  .letter h1 { font-size: 2rem; }
+  .letter p, .lede { font-size: 1rem; }
+  .recent { margin: 30px 0 24px; }
+  .crumbs { margin-bottom: 1rem; }
+
+  /* Home widgets stack, with a compact side-by-side Identity card. */
+  .home-widgets { grid-template-columns: minmax(0, 1fr); }
+  .home-widgets .about-box, .home-widgets .badges-box { grid-row: auto; grid-column: auto; }
+  .home-widgets .about-box { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 0 14px; align-items: center; }
+  .home-widgets .about-box h3 { grid-column: 1 / -1; }
+  .home-widgets .portrait { margin: 2px 0; border-width: 5px; }
+  .home-widgets .portrait-empty svg { width: 34px; height: 34px; }
+  .home-widgets .about-line { text-align: left; }
+  .home-widgets .badges { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
   .pols { grid-template-columns: 1fr 1fr; gap: 20px 14px; }
-  .gallery-grid, .gallery-grid[data-count] { grid-template-columns: 1fr 1fr; }
+  .pols-lg { grid-template-columns: 1fr 1fr; }
+  .pol-cap { font-size: 1.15rem; }
+
+  .item { grid-template-columns: minmax(0, 1fr); gap: 12px; transform: none !important; }
+  .item-photo { max-width: none; transform: rotate(-1deg); }
+  .item-photo img { aspect-ratio: 16 / 9; }
+  .item h2 { font-size: 1.45rem; }
+
+  .post { padding: 18px 15px 20px; }
+  .post-head .lede { font-size: 1.2rem; }
+  .post-cover, .wide-photo { margin-left: -4px; margin-right: -4px; }
+  .fig { margin: 22px 0; }
+  .gallery-grid, .gallery-grid[data-count] { grid-template-columns: 1fr 1fr; gap: 16px 12px; }
   .gallery-grid[data-count="1"] { grid-template-columns: minmax(0, 1fr); }
-  .post-nav { grid-template-columns: 1fr; }
+  .quote p { font-size: 1.3rem; }
+
+  .post-nav { grid-template-columns: 1fr; gap: 10px; }
   .post-nav .next { text-align: left; }
+  .post-nav > span:empty { display: none; }
+
   .lb-figure { inset: 3.75rem .75rem 5.5rem; }
   .lb-prev, .lb-next { top: auto; bottom: 1.25rem; transform: none; }
   .lb-prev { left: calc(50% - 3.5rem); }
   .lb-next { right: calc(50% - 3.5rem); }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .pols, .pols-lg { grid-template-columns: minmax(0, 1fr); }
+  .home-widgets .badges { grid-template-columns: 1fr 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

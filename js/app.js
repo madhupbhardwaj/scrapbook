@@ -131,6 +131,7 @@ function viewHome() {
         ${paragraphs(s.intro)}
         ${s.author ? `<p class="hand sign">${esc(s.author)} ♡</p>` : ""}
       </section>
+      <div class="home-widgets">${aboutBox("-m")}${nowBox("-m")}${badgesBox("-m")}</div>
       ${latest.length ? `<section class="recent" aria-labelledby="recent-h">
         <h2 id="recent-h">Recently added</h2>
         <div class="pols">${latest.map((p, i) => polaroid({ href: `#/p/${esc(p.id)}`, src: p.cover, title: p.title, note: shortDate(p.date), i })).join("")}</div>
@@ -339,7 +340,7 @@ function calendarBox() {
   }
   cells += "</tr>";
 
-  return `<section class="box" aria-labelledby="cal-h">
+  return `<section class="box cal-box" aria-labelledby="cal-h">
     <h3 id="cal-h">${fmt({ month: "long", year: "numeric" }).format(now)}</h3>
     <table class="cal"><thead><tr>${["S", "M", "T", "W", "T", "F", "S"].map((d, i) => `<th scope="col" abbr="${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i]}">${d}</th>`).join("")}</tr></thead><tbody>${cells}</tbody></table>
     <p class="hand cal-note">dotted days have an entry</p>
@@ -347,7 +348,7 @@ function calendarBox() {
 }
 
 function contentsBox(where) {
-  return `<section class="box" aria-labelledby="contents-h">
+  return `<section class="box contents-box" aria-labelledby="contents-h">
     <h3 id="contents-h">Contents</h3>
     <ul class="contents">${db.sections.map((sec) => `
       <li><a href="#/s/${esc(sec.id)}"${where.exact === "section" && where.sectionId === sec.id ? ' aria-current="page"' : ""}>${esc(sec.title)}</a>
@@ -357,22 +358,24 @@ function contentsBox(where) {
   </section>`;
 }
 
-function badgesBox() {
+// The boxes below appear on the home page only. `k` keeps their IDs unique
+// when the phone layout shows a second copy inside the page.
+function badgesBox(k = "") {
   const badges = (db.site.badges || []).map((b) => String(b).trim()).filter(Boolean);
   if (!badges.length) return "";
-  return `<section class="box" aria-labelledby="badges-h">
-    <h3 id="badges-h">Badges</h3>
+  return `<section class="box badges-box" aria-labelledby="badges-h${k}">
+    <h3 id="badges-h${k}">Badges</h3>
     <ul class="badges">${badges.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
   </section>`;
 }
 
 const HEART = '<svg viewBox="0 0 24 24" width="56" height="56" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.1A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
-function aboutBox() {
+function aboutBox(k = "") {
   const a = db.site.about || {};
   if (!a.photo && !a.line) return "";
-  return `<section class="box" aria-labelledby="about-h">
-    <h3 id="about-h">${esc(a.title || "About me")}</h3>
+  return `<section class="box about-box" aria-labelledby="about-h${k}">
+    <h3 id="about-h${k}">${esc(a.title || "About me")}</h3>
     <div class="portrait${a.photo ? "" : " portrait-empty"}">${a.photo
       ? picture(a.photo, { alt: db.site.author ? `Photo of ${db.site.author}` : "", width: 400, sizes: "200px" })
       : HEART}</div>
@@ -380,19 +383,22 @@ function aboutBox() {
   </section>`;
 }
 
-function nowBox() {
+function nowBox(k = "") {
   const rows = (db.site.now || []).filter((r) => r?.label && r?.value);
   if (!rows.length) return "";
-  return `<section class="box now" aria-labelledby="now-h">
-    <h3 id="now-h">Right now</h3>
+  return `<section class="box now" aria-labelledby="now-h${k}">
+    <h3 id="now-h${k}">Right now</h3>
     <dl>${rows.map((r) => `<div><dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd></div>`).join("")}</dl>
   </section>`;
 }
 
 function renderSides(where) {
-  leftEl.innerHTML = calendarBox() + badgesBox() + contentsBox(where);
-  rightEl.innerHTML = aboutBox() + nowBox();
+  const home = where.exact === "home";
+  document.body.classList.toggle("is-home", home);
+  leftEl.innerHTML = calendarBox() + (home ? badgesBox() : "") + contentsBox(where);
+  rightEl.innerHTML = home ? aboutBox() + nowBox() : "";
   rightEl.hidden = !rightEl.innerHTML.trim();
+  document.body.classList.toggle("has-right", !rightEl.hidden);
 }
 
 /* ---------- router ---------- */
@@ -420,6 +426,11 @@ function render() {
   document.title = v.title === db.site.title ? v.title : `${v.title} – ${db.site.title}`;
   renderTabs(where.exact === "home" ? "home" : v.section);
   renderSides(where);
+  // On phones the tabs scroll sideways; keep the current one in view.
+  const tab = tabsEl.querySelector('[aria-current="page"]');
+  if (tab && tabsEl.scrollWidth > tabsEl.clientWidth) {
+    tabsEl.scrollTo({ left: tab.offsetLeft - (tabsEl.clientWidth - tab.offsetWidth) / 2, behavior: firstRender ? "auto" : "smooth" });
+  }
   if (!firstRender) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
