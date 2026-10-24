@@ -182,8 +182,11 @@ export function siteEditor(ctx) {
   const site = clone({ title: "", tagline: "", welcomeTitle: "", intro: "", author: "", about: {}, now: [], ...ctx.data.site });
   site.about = { title: "", photo: "", line: "", ...(site.about || {}) };
   site.now = Array.isArray(site.now) ? site.now : [];
+  site.badges = Array.isArray(site.badges) ? site.badges : [];
   const err = errorBox();
   const title = textInput(site, "title", { required: true, maxlength: 80 });
+  const badgesInput = h("textarea", { class: "input", rows: 4, value: site.badges.join("\n"), placeholder: "JEE prep\nnight owl\nbookworm" });
+  badgesInput.addEventListener("input", () => (site.badges = badgesInput.value.split("\n").map((b) => b.trim()).filter(Boolean)));
 
   const save = h("button", { type: "button", class: "btn btn-primary", onClick: () => busy(save, "Saving…", async () => {
     site.title = site.title.trim();
@@ -239,9 +242,12 @@ export function siteEditor(ctx) {
         h("h2", { class: "form-section" }, "About me box"),
         h("div", { class: "field" }, h("span", { class: "label" }, "Photo"),
           imagePicker(site.about.photo, (id) => { site.about.photo = id; ctx.setDirty(true); }, { label: "About me photo" }),
-          h("p", { class: "hint" }, "Shown as a tilted print. Square photos work best.")),
+          h("p", { class: "hint" }, "Shown as a tilted print. Square photos work best. Without a photo, a heart is shown instead.")),
         field("One line about you", textInput(site.about, "line", { maxlength: 120, placeholder: "e.g. JEE aspirant, Delhi, builds websites" })),
         field("Box title", textInput(site.about, "title", { maxlength: 30, placeholder: "About me" })),
+
+        h("h2", { class: "form-section" }, "Badges box"),
+        field("Badges", badgesInput, "One per line, e.g. JEE prep. Leave empty to hide the box."),
 
         h("h2", { class: "form-section" }, "Right now box"),
         h("p", { class: "hint" }, "Rows with both parts filled in are shown. Leave them empty to hide the box."),

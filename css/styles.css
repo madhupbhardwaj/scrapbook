@@ -358,6 +358,21 @@ main:focus, main:focus-visible { outline: none; }
   background: var(--blush);
 }
 .portrait img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.portrait-empty { display: grid; place-items: center; aspect-ratio: 1; color: var(--velvet); }
+.about-line { font-size: 15px; }
+
+.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.badges li {
+  padding: 6px 2px;
+  border: 2px dotted var(--velvet); border-radius: 8px;
+  font: 500 1.3rem/1.15 var(--font-hand); color: var(--ink); text-align: center;
+  overflow-wrap: anywhere;
+}
+.badges li:nth-child(5n+1) { background: var(--blush); transform: rotate(-3deg); }
+.badges li:nth-child(5n+2) { background: var(--sage); transform: rotate(2deg); }
+.badges li:nth-child(5n+3) { background: var(--sky); transform: rotate(-1deg); }
+.badges li:nth-child(5n+4) { background: var(--butter); transform: rotate(3deg); }
+.badges li:nth-child(5n) { background: var(--rose); transform: rotate(-2deg); }
 .about-line { margin: 0; text-align: center; }
 
 .now dl { margin: 0; }

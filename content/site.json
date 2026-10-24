@@ -6,23 +6,31 @@
     "tagline": "trips, projects and ordinary days",
     "welcomeTitle": "Welcome in",
     "about": {
-      "title": "About me",
+      "title": "Identity",
       "photo": "",
-      "line": "JEE aspirant from Delhi who builds websites for fun"
+      "line": "pre-med ⊹ NEET aspirant ⊹ writer"
     },
     "now": [
       {
-        "label": "Studying",
-        "value": "Rotational mechanics"
+        "label": "Show",
+        "value": "Breaking Bad S4"
       },
       {
-        "label": "Building",
-        "value": "This scrapbook"
+        "label": "Project",
+        "value": "Neuroplasticity paper"
       },
       {
-        "label": "Listening to",
-        "value": "Add your song here"
+        "label": "Baking",
+        "value": "brown butter cookies"
       }
+    ],
+    "badges": [
+      "pre-med",
+      "NEET prep",
+      "bookworm",
+      "baker",
+      "night owl",
+      "safe space"
     ]
   },
   "sections": [

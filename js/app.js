@@ -357,12 +357,25 @@ function contentsBox(where) {
   </section>`;
 }
 
+function badgesBox() {
+  const badges = (db.site.badges || []).map((b) => String(b).trim()).filter(Boolean);
+  if (!badges.length) return "";
+  return `<section class="box" aria-labelledby="badges-h">
+    <h3 id="badges-h">Badges</h3>
+    <ul class="badges">${badges.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
+  </section>`;
+}
+
+const HEART = '<svg viewBox="0 0 24 24" width="56" height="56" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.1A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+
 function aboutBox() {
   const a = db.site.about || {};
   if (!a.photo && !a.line) return "";
   return `<section class="box" aria-labelledby="about-h">
     <h3 id="about-h">${esc(a.title || "About me")}</h3>
-    ${a.photo ? `<div class="portrait">${picture(a.photo, { alt: db.site.author ? `Photo of ${db.site.author}` : "", width: 400, sizes: "200px" })}</div>` : ""}
+    <div class="portrait${a.photo ? "" : " portrait-empty"}">${a.photo
+      ? picture(a.photo, { alt: db.site.author ? `Photo of ${db.site.author}` : "", width: 400, sizes: "200px" })
+      : HEART}</div>
     ${a.line ? `<p class="about-line">${esc(a.line)}</p>` : ""}
   </section>`;
 }
@@ -377,7 +390,7 @@ function nowBox() {
 }
 
 function renderSides(where) {
-  leftEl.innerHTML = calendarBox() + contentsBox(where);
+  leftEl.innerHTML = calendarBox() + badgesBox() + contentsBox(where);
   rightEl.innerHTML = aboutBox() + nowBox();
   rightEl.hidden = !rightEl.innerHTML.trim();
 }
