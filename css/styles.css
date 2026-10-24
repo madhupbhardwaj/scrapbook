@@ -409,6 +409,108 @@ main:focus, main:focus-visible { outline: none; }
 .lb-prev { left: 1rem; }
 .lb-next { right: 1rem; }
 
+/* ---------- paper & colour tints ---------- */
+
+/* Fine paper grain over the whole page. */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 45;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 -.3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: .11;
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] body::after { filter: invert(1); mix-blend-mode: screen; opacity: .07; }
+
+/* Hue/saturation come from the cover photo (set by js/tint.js). */
+:root { --th: 155; --ts: 8%; }
+main.tinted, .shelf {
+  --tint-bg: hsl(var(--th) calc(var(--ts) * .6) 91%);
+  --tint-soft: hsl(var(--th) calc(var(--ts) * .6) 91% / 0);
+  --tint-ink: hsl(var(--th) calc(var(--ts) + 15%) 30%);
+  --tape: hsl(var(--th) calc(var(--ts) + 12%) 80% / .62);
+}
+:root[data-theme="dark"] main.tinted, :root[data-theme="dark"] .shelf {
+  --tint-bg: hsl(var(--th) calc(var(--ts) * .75) 14%);
+  --tint-soft: hsl(var(--th) calc(var(--ts) * .75) 14% / 0);
+  --tint-ink: hsl(var(--th) calc(var(--ts) + 20%) 78%);
+  --tape: hsl(var(--th) calc(var(--ts) + 10%) 72% / .2);
+}
+
+/* Colour wash at the top of section, trip and entry pages (and the home page). */
+main.tinted {
+  background: linear-gradient(180deg, var(--tint-bg) 0, var(--tint-bg) 6rem, var(--tint-soft) 34rem) no-repeat;
+}
+
+/* Home: each section sits on its own tinted page, taped at the corners. */
+.shelf {
+  position: relative;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  background: var(--tint-bg);
+  border-radius: 6px 14px 8px 12px;
+  box-shadow: 0 1px 0 hsl(var(--th) var(--ts) 50% / .08), 0 14px 30px -24px rgba(0, 0, 0, .35);
+}
+.shelf-head { border-top: 0; padding-top: 0; }
+.shelf .link, main.tinted .crumbs a:hover { color: var(--tint-ink); }
+.shelf::before, .shelf::after {
+  content: ""; position: absolute; top: -.55rem; z-index: 2;
+  width: 5.5rem; height: 1.45rem;
+  background: var(--tape);
+  clip-path: polygon(2% 12%, 6% 0, 50% 6%, 95% 0, 100% 14%, 97% 50%, 100% 88%, 94% 100%, 50% 94%, 5% 100%, 0 86%, 3% 50%);
+}
+.shelf::before { left: -1rem; transform: rotate(-32deg); }
+.shelf::after { right: -1rem; transform: rotate(28deg); }
+
+/* Photos as prints: a white border, soft shadow and a strip of tape. */
+.tile { position: relative; }
+.tile-img, .entry-thumb {
+  padding: .4rem;
+  background: var(--surface);
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .06), 0 10px 22px -14px rgba(0, 0, 0, .45);
+}
+.tile-img img, .entry-thumb img { border-radius: 1px; }
+.tile::before {
+  content: ""; position: absolute; z-index: 2; top: -.6rem; left: 50%;
+  width: 4.75rem; height: 1.3rem;
+  background: var(--tape, hsl(155 18% 80% / .62));
+  transform: translateX(-50%) rotate(-3deg);
+  clip-path: polygon(2% 12%, 6% 0, 50% 6%, 95% 0, 100% 14%, 97% 50%, 100% 88%, 94% 100%, 50% 94%, 5% 100%, 0 86%, 3% 50%);
+}
+.tile:nth-child(3n + 2)::before { transform: translateX(-38%) rotate(2.5deg); }
+.tile:nth-child(3n)::before { transform: translateX(-62%) rotate(-1.5deg); }
+.entry:nth-child(odd) .entry-thumb { transform: rotate(-.8deg); }
+.entry:nth-child(even) .entry-thumb { transform: rotate(.7deg); }
+
+.post-cover, .banner {
+  position: relative; overflow: visible;
+  padding: .5rem;
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .06), 0 18px 40px -26px rgba(0, 0, 0, .5);
+}
+.post-cover img, .banner img { border-radius: 2px; }
+.post-cover::before, .post-cover::after, .banner::before {
+  content: ""; position: absolute; top: -.6rem; z-index: 2;
+  width: 6rem; height: 1.5rem;
+  background: var(--tape, hsl(155 18% 80% / .62));
+  clip-path: polygon(2% 12%, 6% 0, 50% 6%, 95% 0, 100% 14%, 97% 50%, 100% 88%, 94% 100%, 50% 94%, 5% 100%, 0 86%, 3% 50%);
+}
+.post-cover::before { left: 1.5rem; transform: rotate(-4deg); }
+.post-cover::after { right: 1.5rem; transform: rotate(3deg); }
+.banner::before { left: 50%; transform: translateX(-50%) rotate(-2deg); }
+
+/* The home mosaic gets one strip of tape on its main photo. */
+.mosaic .m-tile:first-child { overflow: visible; }
+.mosaic .m-tile:first-child img { border-radius: var(--radius); }
+.mosaic .m-tile:first-child .m-cap { border-radius: 0 0 var(--radius) var(--radius); }
+.mosaic .m-tile:first-child::before {
+  content: ""; position: absolute; top: -.6rem; left: 1.25rem; z-index: 2;
+  width: 6rem; height: 1.5rem; transform: rotate(-5deg);
+  background: var(--tape, hsl(155 18% 80% / .62));
+  clip-path: polygon(2% 12%, 6% 0, 50% 6%, 95% 0, 100% 14%, 97% 50%, 100% 88%, 94% 100%, 50% 94%, 5% 100%, 0 86%, 3% 50%);
+}
+
 /* ---------- first-load reveal (home only) ---------- */
 
 @media (prefers-reduced-motion: no-preference) {

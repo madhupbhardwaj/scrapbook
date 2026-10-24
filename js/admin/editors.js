@@ -259,6 +259,27 @@ async function deleteSub(ctx, sub, button) {
   });
 }
 
+/* ---------- background colour ---------- */
+
+function tintField(item) {
+  const name = `tint-${Math.random().toString(36).slice(2, 7)}`;
+  const auto = h("input", { type: "radio", name, value: "auto", checked: !item.tint });
+  const custom = h("input", { type: "radio", name, value: "custom", checked: !!item.tint });
+  const color = h("input", { type: "color", class: "color-input", value: item.tint || "#7fa894", disabled: !item.tint, "aria-label": "Custom background colour" });
+  const sync = () => {
+    color.disabled = !custom.checked;
+    item.tint = custom.checked ? color.value : "";
+  };
+  auto.addEventListener("change", sync);
+  custom.addEventListener("change", sync);
+  color.addEventListener("input", () => (item.tint = color.value));
+  return h("fieldset", { class: "field tint-field" },
+    h("legend", { class: "label" }, "Background colour"),
+    h("label", { class: "check" }, auto, " Automatic, from the cover photo"),
+    h("label", { class: "check" }, custom, " Custom colour", color),
+    h("p", { class: "hint" }, "A soft wash behind this page. Any colour works; the site lightens it for you."));
+}
+
 /* ---------- section ---------- */
 
 export function sectionEditor(ctx, existing) {
@@ -316,6 +337,7 @@ export function sectionEditor(ctx, existing) {
       h("div", { class: "field" }, h("span", { class: "label" }, "Cover photo"),
         imagePicker(item.cover, (id) => { item.cover = id; ctx.setDirty(true); }, { label: "Cover" }),
         h("p", { class: "hint" }, "Shown as a banner at the top of the section page.")),
+      tintField(item),
       !isNew ? h("p", { class: "hint" }, `Web address: /#/s/${existing.id}`) : null,
       err,
     ],
@@ -403,6 +425,7 @@ export function subEditor(ctx, existing, sectionIdForNew) {
       h("div", { class: "field" }, h("span", { class: "label" }, "Cover photo"),
         imagePicker(item.cover, (id) => { item.cover = id; ctx.setDirty(true); }, { label: "Cover" }),
         h("p", { class: "hint" }, "Optional. If empty, the newest entry's cover is used.")),
+      tintField(item),
       !isNew ? h("p", { class: "hint" }, `Web address: /#/s/${item.sectionId}/${existing.id}`) : null,
       err,
     ],

@@ -5,6 +5,7 @@ import { loadContent } from "./data.js";
 import { imageUrl, imageSrcset, youtubeId, cloudinaryVideoUrl } from "./media.js";
 import { md, esc } from "./markdown.js";
 import { openLightbox } from "./lightbox.js";
+import { applyTints } from "./tint.js";
 
 const main = document.getElementById("main");
 const sidebar = document.getElementById("sidebar");
@@ -71,6 +72,18 @@ function buildIndex(data) {
   };
 }
 
+/* ---------- tints ---------- */
+
+// The photo a section's or sub-section's colour comes from.
+function subCover(sub) {
+  return sub?.cover || db.postsOf(sub)[0]?.cover || "";
+}
+function sectionCover(sec) {
+  return sec?.cover || db.subsOf(sec.id).map(subCover).find(Boolean) || "";
+}
+const tintAttrs = (color, src) =>
+  `${color ? ` data-tint="${esc(color)}"` : ""}${src ? ` data-tint-src="${esc(src)}"` : ""}`;
+
 /* ---------- shared pieces ---------- */
 
 function crumbs(trail) {
@@ -108,7 +121,7 @@ function viewHome() {
 
   const shelves = db.sections.map((sec) => {
     const subs = db.subsOf(sec.id);
-    return `<section class="shelf" aria-labelledby="shelf-${esc(sec.id)}">
+    return `<section class="shelf" aria-labelledby="shelf-${esc(sec.id)}"${tintAttrs(sec.tint, sectionCover(sec))}>
       <div class="shelf-head">
         <h2 id="shelf-${esc(sec.id)}"><a href="#/s/${esc(sec.id)}">${esc(sec.title)}</a></h2>
         <a class="link" href="#/s/${esc(sec.id)}">Open ${esc(sec.title)}</a>
@@ -120,6 +133,7 @@ function viewHome() {
 
   return {
     title: db.site.title,
+    tint: { src: latest[0]?.cover },
     html: `<div class="wrap">
       <header class="hero">
         <h1 class="hero-title">${esc(db.site.title)}</h1>
@@ -138,6 +152,7 @@ function viewSection(secId) {
   const subs = db.subsOf(sec.id);
   return {
     title: sec.title,
+    tint: { color: sec.tint, src: sectionCover(sec) },
     html: `<div class="wrap">
       ${crumbs([["Home", "#/"], [sec.title]])}
       <header class="page-head">
@@ -170,6 +185,7 @@ function viewSub(secId, subId) {
 
   return {
     title: sub.title,
+    tint: { color: sub.tint, src: subCover(sub) },
     html: `<div class="wrap">
       ${crumbs([["Home", "#/"], [sec.title, `#/s/${sec.id}`], [sub.title]])}
       <header class="page-head">
@@ -256,6 +272,7 @@ function viewPost(postId) {
 
   return {
     title: p.title,
+    tint: { color: sub?.tint, src: (sub && subCover(sub)) || p.cover },
     html: `<article class="wrap post">
       ${crumbs(trail)}
       <header class="post-head">
@@ -340,6 +357,10 @@ function render() {
   const v = view || viewNotFound();
   main.classList.toggle("intro", firstRender && where.exact === "home");
   main.innerHTML = v.html;
+  if (v.tint?.color) main.dataset.tint = v.tint.color; else delete main.dataset.tint;
+  if (v.tint?.src) main.dataset.tintSrc = v.tint.src; else delete main.dataset.tintSrc;
+  main.classList.toggle("tinted", !!(v.tint?.color || v.tint?.src));
+  applyTints(main);
   document.title = v.title === db.site.title ? v.title : `${v.title} – ${db.site.title}`;
   renderSidebar(where);
   setNav(false);
