@@ -1,0 +1,223 @@
+{
+  "site": {
+    "title": "Madhup's Scrapbook",
+    "intro": "Trips, things I've built, and ordinary days worth keeping. Written down with photos and video so they don't fade.",
+    "author": "Madhup"
+  },
+
+  "sections": [
+    {
+      "id": "travel",
+      "title": "Travel",
+      "description": "Every trip, collected day by day.",
+      "cover": "https://picsum.photos/seed/travel-cover/2000/800",
+      "order": 1
+    },
+    {
+      "id": "projects",
+      "title": "Projects",
+      "description": "Notes from building things: what worked, what broke, and what I'd change.",
+      "cover": "https://picsum.photos/seed/projects-cover/2000/800",
+      "order": 2
+    },
+    {
+      "id": "everyday",
+      "title": "Everyday",
+      "description": "Small days, photo walks, and things I noticed.",
+      "cover": "https://picsum.photos/seed/everyday-cover/2000/800",
+      "order": 3
+    }
+  ],
+
+  "subsections": [
+    {
+      "id": "himachal-2026",
+      "sectionId": "travel",
+      "title": "Himachal, 2026",
+      "description": "Five days between Manali and the valleys around it.",
+      "cover": "https://picsum.photos/seed/himachal/1200/900",
+      "order": 1,
+      "sort": "oldest"
+    },
+    {
+      "id": "rajasthan-2025",
+      "sectionId": "travel",
+      "title": "Rajasthan, 2025",
+      "description": "A winter week in Jaipur.",
+      "cover": "https://picsum.photos/seed/rajasthan/1200/900",
+      "order": 2,
+      "sort": "oldest"
+    },
+    {
+      "id": "web-builds",
+      "sectionId": "projects",
+      "title": "Things I've built",
+      "description": "Write-ups of my web projects.",
+      "order": 1
+    },
+    {
+      "id": "photo-walks",
+      "sectionId": "everyday",
+      "title": "Photo walks in Delhi",
+      "description": "Early mornings with a camera.",
+      "order": 1
+    }
+  ],
+
+  "posts": [
+    {
+      "id": "overnight-to-manali",
+      "subsectionId": "himachal-2026",
+      "title": "The overnight bus to Manali",
+      "date": "2026-05-14",
+      "location": "Manali, Himachal Pradesh",
+      "excerpt": "Fourteen hours on a Volvo out of Delhi, and the first morning in the mountains.",
+      "cover": "https://picsum.photos/seed/manali-bus/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "We left Kashmere Gate a little after six in the evening. By midnight the highway had narrowed, and by four the air coming through the window gap was cold enough to wake everyone up.\n\nThis is sample text. Replace it with your own writing — each **text** block supports headings, lists, *italics* and [links](https://example.com)."
+        },
+        {
+          "type": "image",
+          "src": "https://picsum.photos/seed/manali-morning/1800/1200",
+          "caption": "First light somewhere past Mandi.",
+          "wide": true
+        },
+        {
+          "type": "text",
+          "body": "## What we packed\n\n- One warm jacket each (needed it)\n- Too many snacks (didn't need them)\n- A power bank that was dead by morning"
+        },
+        {
+          "type": "gallery",
+          "caption": "The first day, mostly spent walking around.",
+          "images": [
+            { "src": "https://picsum.photos/seed/manali-1/1600/1200", "caption": "Mall Road before the shops opened." },
+            { "src": "https://picsum.photos/seed/manali-2/1600/1200", "caption": "Cedar trees behind the hotel." },
+            { "src": "https://picsum.photos/seed/manali-3/1600/1200", "caption": "Tea at the corner stall." },
+            { "src": "https://picsum.photos/seed/manali-4/1600/1200", "caption": "The river, louder than expected." },
+            { "src": "https://picsum.photos/seed/manali-5/1600/1200", "caption": "Evening light on the ridge." },
+            { "src": "https://picsum.photos/seed/manali-6/1600/1200", "caption": "Back to the room by eight." }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "Nobody slept on the bus, and nobody admitted it the next morning.",
+          "cite": "Day one, written in the notes app"
+        }
+      ]
+    },
+    {
+      "id": "jogini-falls",
+      "subsectionId": "himachal-2026",
+      "title": "The trail to Jogini Falls",
+      "date": "2026-05-15",
+      "location": "Vashisht, Himachal Pradesh",
+      "excerpt": "An easy uphill walk from Vashisht that took twice as long as planned.",
+      "cover": "https://picsum.photos/seed/jogini/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "The trail starts behind the temple in Vashisht and climbs through orchards before opening up near the falls. It's about an hour each way if you don't stop. We stopped a lot.\n\nThe video below is a placeholder showing how YouTube embeds look. Swap the link for your own unlisted upload."
+        },
+        {
+          "type": "video",
+          "youtube": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "caption": "Placeholder video. Replace it with your own YouTube link."
+        },
+        {
+          "type": "gallery",
+          "images": [
+            { "src": "https://picsum.photos/seed/jogini-1/1600/1200", "caption": "Orchards on the way up." },
+            { "src": "https://picsum.photos/seed/jogini-2/1600/1200", "caption": "The last stretch." },
+            { "src": "https://picsum.photos/seed/jogini-3/1600/1200", "caption": "The falls." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "old-manali",
+      "subsectionId": "himachal-2026",
+      "title": "Old Manali, slowly",
+      "date": "2026-05-16",
+      "location": "Old Manali, Himachal Pradesh",
+      "excerpt": "A day with no plan: cafés, a bookshop, and the long way back.",
+      "cover": "https://picsum.photos/seed/old-manali/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "A short entry is fine too. Some days only need a paragraph and one photo."
+        },
+        {
+          "type": "image",
+          "src": "https://picsum.photos/seed/old-manali-cafe/1600/1100",
+          "caption": "Where most of the afternoon went."
+        }
+      ]
+    },
+    {
+      "id": "amer-fort",
+      "subsectionId": "rajasthan-2025",
+      "title": "A morning at Amer Fort",
+      "date": "2025-12-27",
+      "location": "Jaipur, Rajasthan",
+      "excerpt": "Getting there at opening time was the best decision of the trip.",
+      "cover": "https://picsum.photos/seed/amer/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "We were through the gate by eight, and for the first hour the courtyards were nearly empty.\n\n### Worth knowing\n\n1. Go at opening time.\n2. The composite ticket covers several monuments.\n3. Carry water; the climb is longer than it looks."
+        },
+        {
+          "type": "image",
+          "src": "https://picsum.photos/seed/amer-wall/1800/1200",
+          "caption": "The walls from the upper terrace.",
+          "wide": true
+        }
+      ]
+    },
+    {
+      "id": "study-tracker",
+      "subsectionId": "web-builds",
+      "title": "Building a study tracker for my group",
+      "date": "2026-08-20",
+      "excerpt": "Timers, a shared to-do list and a leaderboard, built with plain JavaScript and Firebase.",
+      "cover": "https://picsum.photos/seed/tracker/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "Sections aren't only for trips. This one shows how a project write-up looks.\n\n## The stack\n\n- HTML, CSS and JavaScript\n- Firebase for sign-in and the database\n- Hosted on Vercel\n\n## What I'd do differently\n\nPlan the data structure first. Changing it after people had started using the app was the hardest part."
+        },
+        {
+          "type": "image",
+          "src": "https://picsum.photos/seed/tracker-screen/1800/1100",
+          "caption": "Placeholder for a screenshot of the app."
+        }
+      ]
+    },
+    {
+      "id": "chandni-chowk-morning",
+      "subsectionId": "photo-walks",
+      "title": "Chandni Chowk before eight",
+      "date": "2026-09-07",
+      "location": "Old Delhi",
+      "excerpt": "Shutters still half down, and the lanes almost quiet.",
+      "cover": "https://picsum.photos/seed/chandni/1800/1100",
+      "blocks": [
+        {
+          "type": "text",
+          "body": "The trick is getting there before the shops open. After nine it's a different place."
+        },
+        {
+          "type": "gallery",
+          "images": [
+            { "src": "https://picsum.photos/seed/cc-1/1600/1200" },
+            { "src": "https://picsum.photos/seed/cc-2/1600/1200" },
+            { "src": "https://picsum.photos/seed/cc-3/1600/1200" },
+            { "src": "https://picsum.photos/seed/cc-4/1600/1200" }
+          ]
+        }
+      ]
+    }
+  ]
+}
