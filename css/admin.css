@@ -304,13 +304,14 @@ select.input { appearance: auto; }
 .block-body .row { margin-bottom: .9rem; }
 .clip-status { min-width: 8rem; }
 
-/* ---------- background colour ---------- */
+/* ---------- site settings ---------- */
 
-.tint-field { border: 0; padding: 0; min-width: 0; }
-.tint-field legend { padding: 0; margin-bottom: .4rem; font-weight: 600; font-size: .925rem; }
-.tint-field .check { display: flex; margin: .3rem 0; }
-.color-input { width: 2.6rem; height: 1.9rem; margin-left: .5rem; padding: 0 .1rem; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); cursor: pointer; }
-.color-input:disabled { opacity: .4; cursor: default; }
+.form-section { margin: 2rem 0 .9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); font-size: 1.1rem; }
+.ed-form > .form-section:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.now-rows { display: grid; gap: .5rem; margin: .6rem 0 1.25rem; }
+.now-row { display: grid; grid-template-columns: 10rem minmax(0, 1fr) auto; gap: .5rem; align-items: center; }
+.now-rows > .btn { justify-self: start; }
+@media (max-width: 600px) { .now-row { grid-template-columns: 1fr 1fr auto; } }
 
 /* ---------- admins ---------- */
 

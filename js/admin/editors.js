@@ -179,27 +179,73 @@ async function importJson(ctx, button) {
 /* ---------- site settings ---------- */
 
 export function siteEditor(ctx) {
-  const site = clone({ title: "", intro: "", author: "", ...ctx.data.site });
+  const site = clone({ title: "", tagline: "", welcomeTitle: "", intro: "", author: "", about: {}, now: [], ...ctx.data.site });
+  site.about = { title: "", photo: "", line: "", ...(site.about || {}) };
+  site.now = Array.isArray(site.now) ? site.now : [];
   const err = errorBox();
   const title = textInput(site, "title", { required: true, maxlength: 80 });
+
   const save = h("button", { type: "button", class: "btn btn-primary", onClick: () => busy(save, "Saving…", async () => {
     site.title = site.title.trim();
     if (!site.title) return err.show("Give the site a title.", title);
     err.clear();
+    site.now = site.now.filter((r) => r.label?.trim() && r.value?.trim());
     await saveSite(site);
     ctx.data.site = site;
     ctx.setDirty(false);
     toast("Saved");
+    drawNow();
   }) }, "Save changes");
+
+  // "Right now" rows: label + value pairs.
+  const nowList = h("div", { class: "now-rows" });
+  function drawNow() {
+    nowList.replaceChildren(
+      ...site.now.map((row, i) => {
+        const label = h("input", { class: "input", value: row.label || "", placeholder: "e.g. Studying", "aria-label": `Row ${i + 1} label` });
+        const value = h("input", { class: "input", value: row.value || "", placeholder: "e.g. Organic chemistry", "aria-label": `Row ${i + 1} value` });
+        label.addEventListener("input", () => (row.label = label.value));
+        value.addEventListener("input", () => (row.value = value.value));
+        return h("div", { class: "now-row" }, label, value,
+          iconButton("remove", `Remove row ${i + 1}`, () => { site.now.splice(i, 1); ctx.setDirty(true); drawNow(); }));
+      }),
+      site.now.length < 8
+        ? h("button", { type: "button", class: "btn btn-small", onClick: () => {
+            site.now.push({ label: "", value: "" });
+            ctx.setDirty(true);
+            drawNow();
+            nowList.querySelectorAll(".now-row input")[site.now.length * 2 - 2]?.focus();
+          } }, "Add a row")
+        : null,
+    );
+  }
+  if (!site.now.length) site.now = [{ label: "Studying", value: "" }, { label: "Reading", value: "" }, { label: "Listening to", value: "" }];
+  drawNow();
 
   return h("div", {},
     shell({
       title: "Site settings",
-      intro: "The name and introduction shown at the top of your home page.",
+      intro: "Your site's name, the welcome note on the home page, and the boxes at the side.",
       form: [
+        h("h2", { class: "form-section" }, "Header"),
         field("Site title", title),
-        field("Introduction", textInput(site, "intro", { multiline: true, rows: 3 }), "One or two sentences under the title."),
-        field("Your name", textInput(site, "author"), "Shown in the footer."),
+        field("Tagline", textInput(site, "tagline", { maxlength: 90, placeholder: "e.g. trips, projects and ordinary days" }), "The handwritten line under the title. Optional."),
+
+        h("h2", { class: "form-section" }, "Welcome note"),
+        field("Heading", textInput(site, "welcomeTitle", { maxlength: 80, placeholder: "Welcome in" })),
+        field("Message", textInput(site, "intro", { multiline: true, rows: 5 }), "Leave an empty line between paragraphs."),
+        field("Your name", textInput(site, "author"), "Signs the note and appears in the footer."),
+
+        h("h2", { class: "form-section" }, "About me box"),
+        h("div", { class: "field" }, h("span", { class: "label" }, "Photo"),
+          imagePicker(site.about.photo, (id) => { site.about.photo = id; ctx.setDirty(true); }, { label: "About me photo" }),
+          h("p", { class: "hint" }, "Shown as a tilted print. Square photos work best.")),
+        field("One line about you", textInput(site.about, "line", { maxlength: 120, placeholder: "e.g. JEE aspirant, Delhi, builds websites" })),
+        field("Box title", textInput(site.about, "title", { maxlength: 30, placeholder: "About me" })),
+
+        h("h2", { class: "form-section" }, "Right now box"),
+        h("p", { class: "hint" }, "Rows with both parts filled in are shown. Leave them empty to hide the box."),
+        nowList,
         err,
       ],
       actions: [save],
@@ -259,27 +305,6 @@ async function deleteSub(ctx, sub, button) {
   });
 }
 
-/* ---------- background colour ---------- */
-
-function tintField(item) {
-  const name = `tint-${Math.random().toString(36).slice(2, 7)}`;
-  const auto = h("input", { type: "radio", name, value: "auto", checked: !item.tint });
-  const custom = h("input", { type: "radio", name, value: "custom", checked: !!item.tint });
-  const color = h("input", { type: "color", class: "color-input", value: item.tint || "#7fa894", disabled: !item.tint, "aria-label": "Custom background colour" });
-  const sync = () => {
-    color.disabled = !custom.checked;
-    item.tint = custom.checked ? color.value : "";
-  };
-  auto.addEventListener("change", sync);
-  custom.addEventListener("change", sync);
-  color.addEventListener("input", () => (item.tint = color.value));
-  return h("fieldset", { class: "field tint-field" },
-    h("legend", { class: "label" }, "Background colour"),
-    h("label", { class: "check" }, auto, " Automatic, from the cover photo"),
-    h("label", { class: "check" }, custom, " Custom colour", color),
-    h("p", { class: "hint" }, "A soft wash behind this page. Any colour works; the site lightens it for you."));
-}
-
 /* ---------- section ---------- */
 
 export function sectionEditor(ctx, existing) {
@@ -337,7 +362,6 @@ export function sectionEditor(ctx, existing) {
       h("div", { class: "field" }, h("span", { class: "label" }, "Cover photo"),
         imagePicker(item.cover, (id) => { item.cover = id; ctx.setDirty(true); }, { label: "Cover" }),
         h("p", { class: "hint" }, "Shown as a banner at the top of the section page.")),
-      tintField(item),
       !isNew ? h("p", { class: "hint" }, `Web address: /#/s/${existing.id}`) : null,
       err,
     ],
@@ -425,7 +449,6 @@ export function subEditor(ctx, existing, sectionIdForNew) {
       h("div", { class: "field" }, h("span", { class: "label" }, "Cover photo"),
         imagePicker(item.cover, (id) => { item.cover = id; ctx.setDirty(true); }, { label: "Cover" }),
         h("p", { class: "hint" }, "Optional. If empty, the newest entry's cover is used.")),
-      tintField(item),
       !isNew ? h("p", { class: "hint" }, `Web address: /#/s/${item.sectionId}/${existing.id}`) : null,
       err,
     ],

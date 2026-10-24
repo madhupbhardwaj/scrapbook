@@ -1,10 +1,30 @@
 {
   "site": {
     "title": "Madhup's Scrapbook",
-    "intro": "Trips, things I've built, and ordinary days worth keeping. Written down with photos and video so they don't fade.",
-    "author": "Madhup"
+    "intro": "Hello, and thanks for stopping by. This is my corner of the internet: part travel diary, part project notebook, part scrapbook of ordinary days.\n\nThere's no rush here. Wander through the sections, open whatever looks interesting, and stay as long as you like.",
+    "author": "Madhup",
+    "tagline": "trips, projects and ordinary days",
+    "welcomeTitle": "Welcome in",
+    "about": {
+      "title": "About me",
+      "photo": "",
+      "line": "JEE aspirant from Delhi who builds websites for fun"
+    },
+    "now": [
+      {
+        "label": "Studying",
+        "value": "Rotational mechanics"
+      },
+      {
+        "label": "Building",
+        "value": "This scrapbook"
+      },
+      {
+        "label": "Listening to",
+        "value": "Add your song here"
+      }
+    ]
   },
-
   "sections": [
     {
       "id": "travel",
@@ -28,7 +48,6 @@
       "order": 3
     }
   ],
-
   "subsections": [
     {
       "id": "himachal-2026",
@@ -63,7 +82,6 @@
       "order": 1
     }
   ],
-
   "posts": [
     {
       "id": "overnight-to-manali",
@@ -92,12 +110,30 @@
           "type": "gallery",
           "caption": "The first day, mostly spent walking around.",
           "images": [
-            { "src": "https://picsum.photos/seed/manali-1/1600/1200", "caption": "Mall Road before the shops opened." },
-            { "src": "https://picsum.photos/seed/manali-2/1600/1200", "caption": "Cedar trees behind the hotel." },
-            { "src": "https://picsum.photos/seed/manali-3/1600/1200", "caption": "Tea at the corner stall." },
-            { "src": "https://picsum.photos/seed/manali-4/1600/1200", "caption": "The river, louder than expected." },
-            { "src": "https://picsum.photos/seed/manali-5/1600/1200", "caption": "Evening light on the ridge." },
-            { "src": "https://picsum.photos/seed/manali-6/1600/1200", "caption": "Back to the room by eight." }
+            {
+              "src": "https://picsum.photos/seed/manali-1/1600/1200",
+              "caption": "Mall Road before the shops opened."
+            },
+            {
+              "src": "https://picsum.photos/seed/manali-2/1600/1200",
+              "caption": "Cedar trees behind the hotel."
+            },
+            {
+              "src": "https://picsum.photos/seed/manali-3/1600/1200",
+              "caption": "Tea at the corner stall."
+            },
+            {
+              "src": "https://picsum.photos/seed/manali-4/1600/1200",
+              "caption": "The river, louder than expected."
+            },
+            {
+              "src": "https://picsum.photos/seed/manali-5/1600/1200",
+              "caption": "Evening light on the ridge."
+            },
+            {
+              "src": "https://picsum.photos/seed/manali-6/1600/1200",
+              "caption": "Back to the room by eight."
+            }
           ]
         },
         {
@@ -128,9 +164,18 @@
         {
           "type": "gallery",
           "images": [
-            { "src": "https://picsum.photos/seed/jogini-1/1600/1200", "caption": "Orchards on the way up." },
-            { "src": "https://picsum.photos/seed/jogini-2/1600/1200", "caption": "The last stretch." },
-            { "src": "https://picsum.photos/seed/jogini-3/1600/1200", "caption": "The falls." }
+            {
+              "src": "https://picsum.photos/seed/jogini-1/1600/1200",
+              "caption": "Orchards on the way up."
+            },
+            {
+              "src": "https://picsum.photos/seed/jogini-2/1600/1200",
+              "caption": "The last stretch."
+            },
+            {
+              "src": "https://picsum.photos/seed/jogini-3/1600/1200",
+              "caption": "The falls."
+            }
           ]
         }
       ]
@@ -211,10 +256,18 @@
         {
           "type": "gallery",
           "images": [
-            { "src": "https://picsum.photos/seed/cc-1/1600/1200" },
-            { "src": "https://picsum.photos/seed/cc-2/1600/1200" },
-            { "src": "https://picsum.photos/seed/cc-3/1600/1200" },
-            { "src": "https://picsum.photos/seed/cc-4/1600/1200" }
+            {
+              "src": "https://picsum.photos/seed/cc-1/1600/1200"
+            },
+            {
+              "src": "https://picsum.photos/seed/cc-2/1600/1200"
+            },
+            {
+              "src": "https://picsum.photos/seed/cc-3/1600/1200"
+            },
+            {
+              "src": "https://picsum.photos/seed/cc-4/1600/1200"
+            }
           ]
         }
       ]
