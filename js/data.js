@@ -1,32 +1,56 @@
-// Content loading. Everything else in the site only ever calls loadContent(),
-// so switching from the JSON file to Firestore later means changing this file alone.
+// Content loading for the public site. Everything else only ever calls loadContent().
 //
-// Shape returned (and the shape the upload panel will write):
+// Shape returned (identical for the JSON file and the database):
 // {
 //   site:        { title, intro, author },
 //   sections:    [{ id, title, description, cover, order }],
 //   subsections: [{ id, sectionId, title, description, cover, order, sort }],
 //   posts:       [{ id, subsectionId, title, date, location, excerpt, cover, draft, blocks: [...] }]
 // }
-// In Firestore these become three collections (sections, subsections, posts) plus one "site" doc.
+// In Firestore: one "site/settings" document plus "sections", "subsections" and "posts" collections,
+// where each document's ID is the item's id.
 
-import { CONFIG } from "./config.js";
+import { CONFIG, firebaseConfigured } from "./config.js";
+import { firestore } from "./firebase.js";
 
 export async function loadContent() {
-  switch (CONFIG.contentSource) {
-    case "json":
-      return loadFromJson(CONFIG.contentUrl);
-    // case "firestore":
-    //   return loadFromFirestore();   // added with the upload panel
-    default:
-      throw new Error(`Unknown content source "${CONFIG.contentSource}" in js/config.js`);
+  const source = CONFIG.contentSource;
+  if (source === "json") return loadFromJson();
+  if (source === "firestore") return loadFromFirestore();
+
+  // "auto": use the database once it's set up and has content.
+  if (firebaseConfigured()) {
+    try {
+      const data = await loadFromFirestore();
+      if (data.sections.length) return data;
+    } catch (err) {
+      console.warn("Couldn't read the database, showing content/site.json instead.", err);
+    }
   }
+  return loadFromJson();
 }
 
-async function loadFromJson(url) {
-  const res = await fetch(url, { cache: "no-cache" });
-  if (!res.ok) throw new Error(`Couldn't load ${url} (HTTP ${res.status}).`);
+async function loadFromJson() {
+  const res = await fetch(CONFIG.contentUrl, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`Couldn't load ${CONFIG.contentUrl} (HTTP ${res.status}).`);
   return normalise(await res.json());
+}
+
+async function loadFromFirestore() {
+  const { fs, db } = await firestore();
+  const [site, sections, subsections, posts] = await Promise.all([
+    fs.getDoc(fs.doc(db, "site", "settings")),
+    fs.getDocs(fs.collection(db, "sections")),
+    fs.getDocs(fs.collection(db, "subsections")),
+    fs.getDocs(fs.query(fs.collection(db, "posts"), fs.where("draft", "==", false))),
+  ]);
+  const list = (snap) => snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+  return normalise({
+    site: site.exists() ? site.data() : {},
+    sections: list(sections),
+    subsections: list(subsections),
+    posts: list(posts),
+  });
 }
 
 function normalise(d = {}) {
