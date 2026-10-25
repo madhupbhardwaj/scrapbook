@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- tilted print with an offset shadow -->
+  <g transform="rotate(-7 32 34)">
+    <rect x="12" y="12" width="42" height="48" rx="3" fill="#DDBF94"/>
+    <rect x="9" y="9" width="42" height="48" rx="3" fill="#FBF6EA" stroke="#5E3B2E" stroke-width="2.6"/>
+    <rect x="14.5" y="14.5" width="31" height="28" rx="1.5" fill="#DDBF94"/>
+    <path d="M30 37.5s-8.2-5-8.2-10.6a4.6 4.6 0 0 1 8.2-2.8 4.6 4.6 0 0 1 8.2 2.8c0 5.6-8.2 10.6-8.2 10.6z" fill="#FBF6EA" stroke="#5E3B2E" stroke-width="2.4" stroke-linejoin="round"/>
+  </g>
+  <!-- strip of tape -->
+  <rect x="21" y="2.5" width="22" height="9" rx="1" fill="#C9D6BF" fill-opacity=".92" transform="rotate(4 32 7)"/>
+  <path d="M22.4 3.6v8.6M41.4 4.9v8.6" stroke="#FBF6EA" stroke-width="1" stroke-dasharray="1 1.2" transform="rotate(4 32 7)"/>
+</svg>
