@@ -32,14 +32,43 @@ function shell({ context, title, status, intro, form, actions }) {
       intro ? h("p", { class: "ed-intro muted" }, intro) : null,
     ),
     form ? h("form", { class: "ed-form", novalidate: true, onSubmit: (e) => e.preventDefault() }, form) : null,
-    actions ? h("div", { class: "ed-actions" }, actions) : null,
+    actions ? actionBar(actions) : null,
   );
+}
+
+// The save bar stays stuck to the bottom of the screen. On phones only the saving buttons
+// stay in it; links, reordering and delete move to a row under the form, so the bar is one
+// line tall and leaves room to type.
+const phone = window.matchMedia("(max-width: 600px)");
+
+function actionBar(actions) {
+  const bar = h("div", { class: "ed-actions" }, actions);
+  const more = h("div", { class: "ed-more" });
+  const items = [...bar.children];
+  const keep = (el) => el.matches("button.btn") && !el.matches(".btn-quiet, .btn-danger-quiet");
+  const place = () => {
+    if (phone.matches) {
+      items.forEach((el) => (keep(el) ? bar : more).append(el));
+    } else {
+      items.forEach((el) => bar.append(el));
+    }
+    more.hidden = !more.children.length || !phone.matches;
+  };
+  place();
+  const onChange = () => {
+    if (!document.contains(bar)) { phone.removeEventListener("change", onChange); return; }
+    place();
+  };
+  phone.addEventListener("change", onChange);
+  return [bar, more];
 }
 
 // Runs an async save with the button showing progress; shows errors as toasts.
 async function busy(button, label, fn) {
   const original = button.textContent;
-  const buttons = button.closest(".ed-actions, .ed, form")?.querySelectorAll("button") || [button];
+  // Disable the whole editor's buttons (the save bar and the row under it) while saving.
+  const scope = button.closest(".ed-actions, .ed-more") ? button.closest(".ed") : button.closest(".ed, form");
+  const buttons = scope?.querySelectorAll("button") || [button];
   buttons.forEach((b) => (b.disabled = true));
   button.textContent = label;
   try {
