@@ -292,7 +292,18 @@ function viewNotFound() {
   };
 }
 
+function viewBackSoon() {
+  return `<section class="box letter back-soon">
+    <p class="hand back-soon-kicker">gone for a little walk…</p>
+    <h1>Back soon</h1>
+    <p>The scrapbook is taking a short break and will be back in a few hours. Nothing's lost: every page is safe and will be right here when it returns.</p>
+    <p class="hand back-soon-sign">see you again soon ♡</p>
+    <p><button type="button" class="pill" onclick="location.reload()">Try again</button></p>
+  </section>`;
+}
+
 function viewError(err) {
+  if (err.unavailable) return viewBackSoon();
   const local = location.protocol === "file:";
   return `<section class="box letter">
     <h1>The content didn't load</h1>
@@ -490,6 +501,11 @@ paintThemeButton();
     window.addEventListener("hashchange", render);
   } catch (err) {
     console.error(err);
+    // Keep the page looking like the site: use the name from the browser tab title.
+    document.querySelector(".site-title").textContent = document.title;
+    document.getElementById("site-foot").textContent = `© ${new Date().getFullYear()} ${document.title}`;
+    leftEl.hidden = rightEl.hidden = true;
+    document.body.classList.add("is-solo");
     main.innerHTML = viewError(err);
   }
 })();

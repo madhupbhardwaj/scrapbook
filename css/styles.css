@@ -525,3 +525,15 @@ body:not(.has-right) .shell { grid-template-columns: 230px minmax(0, 1fr); max-w
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- "back soon" (shown when the database can't be reached) ---------- */
+
+body.is-solo .shell { grid-template-columns: minmax(0, 1fr); max-width: 620px; }
+body.is-solo .tabs { display: none; }
+.back-soon { margin-top: 30px; text-align: center; transform: rotate(-.6deg); }
+.back-soon h1 { margin: .1rem 0 .6rem; }
+.back-soon p { max-width: 30em; margin-left: auto; margin-right: auto; }
+.back-soon-kicker { margin: 0; font-size: 1.35rem; color: var(--velvet); }
+.back-soon-sign { font-size: 1.4rem; color: var(--velvet); }
+.back-soon .pill { font: inherit; cursor: pointer; }
+.back-soon .pill:hover { background: var(--rose); }

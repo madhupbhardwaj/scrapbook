@@ -18,16 +18,32 @@ export async function loadContent() {
   if (source === "json") return loadFromJson();
   if (source === "firestore") return loadFromFirestore();
 
-  // "auto": use the database once it's set up and has content.
-  if (firebaseConfigured()) {
-    try {
-      const data = await loadFromFirestore();
-      if (data.sections.length) return data;
-    } catch (err) {
-      console.warn("Couldn't read the database, showing content/site.json instead.", err);
-    }
+  // "auto": once the database is set up it is the only source. If it can't be reached
+  // (daily free limit used up, outage, no connection) the site shows a "back soon" note
+  // rather than the sample content in content/site.json.
+  if (!firebaseConfigured()) return loadFromJson();
+  try {
+    return await withTimeout(loadFromFirestore(), 12000);
+  } catch (err) {
+    console.warn("Couldn't read the database.", err);
+    throw unavailable(err);
   }
-  return loadFromJson();
+}
+
+// Marks an error as "the content is temporarily unreachable" so the page can say so kindly.
+function unavailable(cause) {
+  const err = new Error("The content is temporarily unavailable.");
+  err.unavailable = true;
+  err.cause = cause;
+  return err;
+}
+
+function withTimeout(promise, ms) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`No reply from the database after ${ms / 1000}s.`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
 async function loadFromJson() {
