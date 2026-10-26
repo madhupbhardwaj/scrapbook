@@ -185,7 +185,7 @@ export function siteEditor(ctx) {
   site.badges = Array.isArray(site.badges) ? site.badges : [];
   const err = errorBox();
   const title = textInput(site, "title", { required: true, maxlength: 80 });
-  const badgesInput = h("textarea", { class: "input", rows: 4, value: site.badges.join("\n"), placeholder: "JEE prep\nnight owl\nbookworm" });
+  const badgesInput = h("textarea", { class: "input", rows: 4, value: site.badges.join("\n"), placeholder: "NEET prep\nnight owl\nbookworm" });
   badgesInput.addEventListener("input", () => (site.badges = badgesInput.value.split("\n").map((b) => b.trim()).filter(Boolean)));
 
   const save = h("button", { type: "button", class: "btn btn-primary", onClick: () => busy(save, "Saving…", async () => {
