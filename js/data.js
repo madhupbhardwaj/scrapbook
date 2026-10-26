@@ -71,7 +71,7 @@ async function loadFromFirestore() {
 
 function normalise(d = {}) {
   return {
-    site: { title: "Scrapbook", intro: "", author: "", ...(d.site || {}) },
+    site: { title: "The Velvet Ventricle", intro: "", author: "", ...(d.site || {}) },
     sections: Array.isArray(d.sections) ? d.sections : [],
     subsections: Array.isArray(d.subsections) ? d.subsections : [],
     posts: Array.isArray(d.posts) ? d.posts : [],

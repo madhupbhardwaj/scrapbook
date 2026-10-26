@@ -79,7 +79,7 @@ async function boot() {
 function renderNotice(title, message) {
   app.replaceChildren(h("main", { class: "login" },
     h("div", { class: "login-card" },
-      h("p", { class: "login-brand" }, "Scrapbook admin"),
+      h("p", { class: "login-brand" }, "The Velvet Ventricle admin"),
       h("h1", {}, title),
       h("p", { class: "muted" }, message),
       h("a", { class: "btn", href: "./" }, "Go to the site"))));
@@ -129,7 +129,7 @@ function renderLogin() {
 
   app.replaceChildren(h("main", { class: "login" },
     h("div", { class: "login-card" },
-      h("p", { class: "login-brand" }, "Scrapbook admin"),
+      h("p", { class: "login-brand" }, "The Velvet Ventricle admin"),
       h("h1", {}, "Sign in"),
       form,
       h("a", { class: "login-back", href: "./" }, "Back to the site"))));
@@ -161,7 +161,7 @@ function renderApp() {
   app.replaceChildren(
     h("header", { class: "a-top" },
       menuBtn,
-      h("a", { class: "a-brand", href: "#" }, h("span", {}, state.data.site.title || "Scrapbook"), h("span", { class: "a-brand-sub" }, "Admin")),
+      h("a", { class: "a-brand", href: "#" }, h("span", {}, state.data.site.title || "The Velvet Ventricle"), h("span", { class: "a-brand-sub" }, "Admin")),
       statusEl,
       h("a", { class: "btn btn-small btn-quiet a-view", href: "./", target: "_blank", rel: "noopener" }, "View site"),
       h("span", { class: "a-user" }, state.username),
