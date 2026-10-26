@@ -243,11 +243,11 @@ export function siteEditor(ctx) {
         h("div", { class: "field" }, h("span", { class: "label" }, "Photo"),
           imagePicker(site.about.photo, (id) => { site.about.photo = id; ctx.setDirty(true); }, { label: "About me photo" }),
           h("p", { class: "hint" }, "Shown as a tilted print. Square photos work best. Without a photo, a heart is shown instead.")),
-        field("One line about you", textInput(site.about, "line", { maxlength: 120, placeholder: "e.g. JEE aspirant, Delhi, builds websites" })),
+        field("One line about you", textInput(site.about, "line", { maxlength: 120, placeholder: "e.g. NEET aspirant, Delhi, loves reading books" })),
         field("Box title", textInput(site.about, "title", { maxlength: 30, placeholder: "About me" })),
 
         h("h2", { class: "form-section" }, "Badges box"),
-        field("Badges", badgesInput, "One per line, e.g. JEE prep. Leave empty to hide the box."),
+        field("Badges", badgesInput, "One per line, e.g. Reader. Leave empty to hide the box."),
 
         h("h2", { class: "form-section" }, "Right now box"),
         h("p", { class: "hint" }, "Rows with both parts filled in are shown. Leave them empty to hide the box."),
