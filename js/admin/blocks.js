@@ -105,7 +105,7 @@ export function blockEditor(blocks, onChange) {
       case "text": {
         const area = input(b, "body", { multiline: true, rows: 6, placeholder: "Write here…" });
         area.setAttribute("aria-label", "Text");
-        return [area, h("p", { class: "hint" }, "New paragraph: leave an empty line. ## Heading, - list item, **bold**, *italic*, [link text](https://…)")];
+        return [textToolbar(area), area, h("p", { class: "hint" }, "Select words, then tap a button. Leave an empty line for a new paragraph.")];
       }
 
       case "image": {
@@ -220,4 +220,115 @@ export function blockEditor(blocks, onChange) {
 
   render();
   return root;
+}
+
+/* ---------- formatting toolbar for text blocks ----------
+   The buttons just type the same symbols the site already understands
+   (**bold**, *italic*, __underline__, ++bigger++, ## heading, - list, 1. list, [link](url)),
+   so entries written by hand and entries written with the buttons look identical. */
+
+const SVG = (d) => `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const TOOLS = [
+  { key: "b", label: "Bold", shortcut: "b", html: "<b>B</b>", run: (a) => wrap(a, "**", "bold text") },
+  { key: "i", label: "Italic", shortcut: "i", html: "<i>I</i>", run: (a) => wrap(a, "*", "italic text") },
+  { key: "u", label: "Underline", shortcut: "u", html: "<u>U</u>", run: (a) => wrap(a, "__", "underlined text") },
+  { key: "big", label: "Bigger text", html: "A<sup>+</sup>", run: (a) => wrap(a, "++", "bigger text") },
+  { sep: true },
+  { key: "h", label: "Heading", html: "H", run: (a) => linePrefix(a, () => "## ", /^#{2,4}\s+/, "Heading") },
+  { key: "ul", label: "Bulleted list", html: SVG('<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".9" fill="currentColor"/><circle cx="4.5" cy="12" r=".9" fill="currentColor"/><circle cx="4.5" cy="18" r=".9" fill="currentColor"/>'), run: (a) => linePrefix(a, () => "- ", /^[-*]\s+/, "List item") },
+  { key: "ol", label: "Numbered list", html: SVG('<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 5l1.5-1v5M3.6 15.2c.3-.7 1.9-1 2 .1.1.8-2 1.9-2 2.7h2.2" stroke-width="1.5"/>'), run: (a) => linePrefix(a, (i) => `${i + 1}. `, /^\d+[.)]\s+/, "List item") },
+  { key: "link", label: "Link", html: SVG('<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>'), run: link },
+];
+
+function textToolbar(area) {
+  const bar = h("div", { class: "fmt-bar", role: "toolbar", "aria-label": "Text formatting" });
+  for (const t of TOOLS) {
+    if (t.sep) { bar.append(h("span", { class: "fmt-sep", "aria-hidden": "true" })); continue; }
+    const btn = h("button", {
+      type: "button", class: `fmt-btn fmt-${t.key}`, html: t.html,
+      title: t.shortcut ? `${t.label} (Ctrl/⌘ ${t.shortcut.toUpperCase()})` : t.label, "aria-label": t.label,
+    });
+    // Keep the text box focused (and the phone keyboard open) when a button is pressed.
+    btn.addEventListener("pointerdown", (e) => e.preventDefault());
+    btn.addEventListener("click", () => t.run(area));
+    bar.append(btn);
+  }
+  area.addEventListener("keydown", (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+    const t = TOOLS.find((x) => x.shortcut === e.key.toLowerCase());
+    if (t) { e.preventDefault(); t.run(area); }
+  });
+  return bar;
+}
+
+// Replaces area[start, end) with text, keeping undo working where the browser allows it,
+// then selects [selStart, selEnd) and tells the editor something changed.
+function replace(area, start, end, text, selStart, selEnd) {
+  area.focus();
+  area.setSelectionRange(start, end);
+  let done = false;
+  try { done = document.execCommand("insertText", false, text); } catch { done = false; }
+  if (!done || area.value.slice(start, start + text.length) !== text) {
+    area.setRangeText(text, start, end, "end");
+    area.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  area.setSelectionRange(selStart, selEnd);
+}
+
+function wrap(area, mark, placeholder) {
+  const v = area.value;
+  let s = area.selectionStart, e = area.selectionEnd;
+  // Leave spaces outside the markers: "word " -> "**word** ".
+  while (s < e && /\s/.test(v[s])) s++;
+  while (e > s && /\s/.test(v[e - 1])) e--;
+  const n = mark.length;
+  const before = v.slice(s - n, s), after = v.slice(e, e + n);
+  // Italic shouldn't mistake bold's "**" for its own "*".
+  const isItalicInsideBold = mark === "*" && (v[s - 2] === "*" && v[e + 1] === "*") && !(v[s - 3] === "*" && v[e + 2] === "*");
+  if (before === mark && after === mark && !isItalicInsideBold) {
+    // Already formatted: remove the markers.
+    replace(area, s - n, e + n, v.slice(s, e), s - n, e - n);
+    return;
+  }
+  const inner = v.slice(s, e);
+  const boldNotItalic = mark === "*" && inner.startsWith("**") && !inner.startsWith("***");
+  if (!boldNotItalic && inner.startsWith(mark) && inner.endsWith(mark) && inner.length >= n * 2 + 1) {
+    replace(area, s, e, inner.slice(n, -n), s, e - n * 2);
+    return;
+  }
+  const text = inner || placeholder;
+  replace(area, s, e, mark + text + mark, s + n, s + n + text.length);
+}
+
+// Adds (or removes, if every line already has it) a prefix at the start of each selected line.
+const ANY_PREFIX = /^(#{2,4}|[-*]|\d+[.)])\s+/;
+
+function linePrefix(area, prefixFor, pattern, placeholder) {
+  const v = area.value;
+  const s = v.lastIndexOf("\n", area.selectionStart - 1) + 1;
+  let e = v.indexOf("\n", area.selectionEnd - (area.selectionEnd > area.selectionStart && v[area.selectionEnd - 1] === "\n" ? 1 : 0));
+  if (e === -1) e = v.length;
+  const lines = v.slice(s, e).split("\n");
+  const all = lines.every((l) => !l.trim() || pattern.test(l));
+  let i = 0;
+  const out = lines.map((l) => {
+    // Switching between heading / bullets / numbers replaces the old marker.
+    const bare = l.replace(all ? pattern : ANY_PREFIX, "");
+    if (all) return bare;
+    if (!bare.trim() && lines.length > 1) return l;
+    return prefixFor(i++) + (bare || placeholder);
+  }).join("\n");
+  replace(area, s, e, out, s, s + out.length);
+}
+
+function link(area) {
+  const v = area.value;
+  let s = area.selectionStart, e = area.selectionEnd;
+  while (s < e && /\s/.test(v[s])) s++;
+  while (e > s && /\s/.test(v[e - 1])) e--;
+  const label = v.slice(s, e) || "link text";
+  const text = `[${label}](https://)`;
+  // Select "https://" so the web address can be pasted straight over it.
+  const urlStart = s + label.length + 3;
+  replace(area, s, e, text, urlStart, urlStart + 8);
 }

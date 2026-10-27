@@ -109,7 +109,7 @@ p { text-wrap: pretty; }
   color: var(--velvet); text-decoration: none;
   text-shadow: 3px 3px 0 var(--blush);
 }
-.tagline { margin: 4px 0 0; font-size: 1.6rem; color: var(--ink); }
+.tagline { margin: 10px 0 0; font-size: 1.6rem; color: var(--ink); }
 .tagline span { color: var(--velvet); opacity: .7; }
 
 .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 18px 12px 26px; }
@@ -286,6 +286,8 @@ main:focus, main:focus-visible { outline: none; }
 .prose ul, .prose ol { margin: 0 0 1.1em; padding-left: 1.3em; }
 .prose li + li { margin-top: .3em; }
 .prose li::marker { color: var(--velvet); }
+.prose u { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.prose .big { font-size: 1.3em; line-height: 1.4; }
 .prose code { font-size: .9em; padding: .1em .35em; border-radius: 4px; background: var(--rose); }
 
 .fig { margin: 28px 0; }
@@ -361,12 +363,15 @@ main:focus, main:focus-visible { outline: none; }
 .portrait-empty { display: grid; place-items: center; aspect-ratio: 1; color: var(--velvet); }
 .about-line { font-size: 15px; }
 
-.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; list-style: none; margin: 0; padding: 0; }
+/* Badges flow like stickers: short ones pair up, long ones take a full row,
+   and words only break if a single word is wider than the whole box. */
+.badges { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
 .badges li {
-  padding: 6px 2px;
+  flex: 1 1 auto; min-width: 4.5rem;
+  padding: 6px 8px;
   border: 2px dotted var(--velvet); border-radius: 8px;
   font: 500 1.3rem/1.15 var(--font-hand); color: var(--ink); text-align: center;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .badges li:nth-child(5n+1) { background: var(--blush); transform: rotate(-3deg); }
 .badges li:nth-child(5n+2) { background: var(--sage); transform: rotate(2deg); }
@@ -464,6 +469,12 @@ body:not(.has-right) .shell { grid-template-columns: 230px minmax(0, 1fr); max-w
     border-top: 2px dotted var(--dot); border-bottom: 2px dotted color-mix(in srgb, var(--velvet) 35%, transparent);
   }
   .tabs::-webkit-scrollbar { display: none; }
+  /* Soft fade at both ends hints that the row scrolls sideways. */
+  .tabs {
+    padding-right: 28px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 26px), transparent);
+    mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 26px), transparent);
+  }
   .tab { flex: none; padding: 7px 16px; min-height: 40px; display: inline-flex; align-items: center; }
   .tab:hover { transform: none; }
 
@@ -520,6 +531,17 @@ body:not(.has-right) .shell { grid-template-columns: 230px minmax(0, 1fr); max-w
 @media (max-width: 360px) {
   .pols, .pols-lg { grid-template-columns: minmax(0, 1fr); }
   .home-widgets .badges { grid-template-columns: 1fr 1fr; }
+}
+
+/* Touch screens: give small text links a finger-sized tap area without changing the look. */
+@media (pointer: coarse) {
+  .contents a { display: inline-block; padding: 7px 0; }
+  .contents > li + li { margin-top: 2px; }
+  .contents ul { margin-top: -4px; }
+  .crumbs a { display: inline-block; padding: 8px 0; margin: -8px 0; }
+  .crumbs { margin-top: -4px; }
+  .cal td.has-entry a { padding: 6px 0; margin: -6px 0; }
+  .more a { display: inline-block; padding: 8px 0; margin: -8px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,7 @@
 // A small, safe Markdown renderer for text blocks.
 // Supports: ## / ### / #### headings, paragraphs, - lists, 1. lists,
-// **bold**, *italic*, `code`, [links](https://...). All input is HTML-escaped first.
+// **bold**, *italic*, __underline__, ++bigger text++, `code`, [links](https://...).
+// All input is HTML-escaped first.
 
 const ENTITIES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 export const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ENTITIES[c]);
@@ -12,6 +13,10 @@ function inline(text) {
   s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
   s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   s = s.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+  // Underline and bigger text. They must not start or end mid-word, so web
+  // addresses that happen to contain "__" or "++" are left alone.
+  s = s.replace(/(^|[^\w])__(?=\S)([^_]*?\S)__(?!\w)/g, "$1<u>$2</u>");
+  s = s.replace(/(^|[^\w+])\+\+(?=\S)([^+]*?\S)\+\+(?![\w+])/g, '$1<span class="big">$2</span>');
   s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) => {
     if (!SAFE_URL.test(url)) return label;
     const external = /^https?:/i.test(url);
