@@ -49,7 +49,7 @@ These values are meant to be public. Security comes from the rules in step 3, no
 
 **Build → Authentication → Get started → Sign-in method → Email/Password → Enable → Save.**
 
-The panel uses usernames. Behind the scenes, username `madhup` becomes the login `madhup@scrapbook.local`. No email is ever sent there.
+The panel uses usernames. Behind the scenes, username `admin` becomes the login `admin@scrapbook.local`. No email is ever sent there.
 
 ### 3. Create the database and lock it down
 
@@ -63,13 +63,13 @@ With these rules, anyone can read published entries, and only admins can see dra
 This is done once by hand. After that, you add other admins from inside the panel.
 
 1. **Authentication → Users → Add user.**
-   - Email: `yourusername@scrapbook.local` (e.g. `madhup@scrapbook.local`)
+   - Email: `yourusername@scrapbook.local` (e.g. `admin@scrapbook.local`)
    - Password: your choice, at least 8 characters
 2. Copy the new user's **User UID** from the list (a long string like `x8Fk2…`).
 3. **Firestore Database → Data → Start collection.**
    - Collection ID: `admins`
    - Document ID: paste the **User UID**
-   - Add a field: name `username`, type string, value `madhup`
+   - Add a field: name `username`, type string, value `admin`
    - Save
 
 Having a login isn't enough on its own. Only accounts with a document in `admins` can get into the panel or change content.
