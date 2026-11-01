@@ -21,7 +21,7 @@ export const CONFIG = {
   },
 
   // Admin usernames are turned into logins of the form  <username>@<adminEmailDomain>.
-  // Example: username "madhup" → madhup@scrapbook.local  (no email is ever sent there).
+  // Example: username "admin" → admin@scrapbook.local  (no email is ever sent there).
   adminEmailDomain: "scrapbook.local",
 
   // ---- Where the public site reads content from ----
